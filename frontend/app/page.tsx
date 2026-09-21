@@ -72,17 +72,19 @@ function CaseStudyView() {
 }
 
 function PageInner() {
-  const { openId } = useCaseStudy();
+  const { openId, returnSection, setReturnSection } = useCaseStudy();
   const prevOpenId = useRef<string | null>(null);
 
   // Closing a case study should land back on the Work section it came
   // from, not the top of the page (PageContent remounts scrolled to 0).
   useEffect(() => {
     if (prevOpenId.current && !openId) {
-      requestAnimationFrame(() => scrollToSection("work"));
+      const targetSection = returnSection ?? "work";
+      setReturnSection(null);
+      requestAnimationFrame(() => requestAnimationFrame(() => scrollToSection(targetSection)));
     }
     prevOpenId.current = openId;
-  }, [openId]);
+  }, [openId, returnSection, setReturnSection]);
 
   return (
     <main style={{ position: "relative" }}>

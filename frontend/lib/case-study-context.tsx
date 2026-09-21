@@ -5,14 +5,17 @@ import { createContext, useContext, useState, ReactNode } from "react";
 type CaseStudyContextType = {
   openId: string | null;
   setOpenId: (id: string | null) => void;
+  returnSection: string | null;
+  setReturnSection: (id: string | null) => void;
 };
 
 const CaseStudyContext = createContext<CaseStudyContextType | null>(null);
 
 export function CaseStudyProvider({ children }: { children: ReactNode }) {
   const [openId, setOpenId] = useState<string | null>(null);
+  const [returnSection, setReturnSection] = useState<string | null>(null);
   return (
-    <CaseStudyContext.Provider value={{ openId, setOpenId }}>
+    <CaseStudyContext.Provider value={{ openId, setOpenId, returnSection, setReturnSection }}>
       {children}
     </CaseStudyContext.Provider>
   );

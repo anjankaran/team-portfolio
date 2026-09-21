@@ -82,41 +82,53 @@ export function GitHubRepoDetails({ p }: { p: ProjectCase }) {
   const [content, setContent] = useState("");
   const [selected, setSelected] = useState("README.md");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [fileError, setFileError] = useState("");
+  const [readmeError, setReadmeError] = useState("");
   useEffect(() => {
+    window.scrollTo(0, 0);
     let cancelled = false;
-    setRepo(null); setFiles([]); setLanguages({}); setContent(""); setSelected("README.md"); setLoading(true); setError("");
+    setRepo(null); setFiles([]); setLanguages({}); setContent(""); setSelected("README.md"); setLoading(true); setFileError(""); setReadmeError("");
     const headers = { Accept: "application/vnd.github+json" };
     const loadRepository = async () => {
       try {
         const metadataResponse = await fetch(`https://api.github.com/repos/${repoPath}`, { headers });
-        if (!metadataResponse.ok) throw new Error("Repository details are unavailable from GitHub.");
-        const metadata = await metadataResponse.json() as Repo;
+        const metadata = metadataResponse.ok ? await metadataResponse.json() as Repo : null;
         if (cancelled) return;
-        setRepo(metadata);
+        if (metadata) setRepo(metadata);
+        const branches = [...new Set([metadata?.default_branch, "main", "master"].filter(Boolean))] as string[];
 
+        const loadTree = async () => {
+          let lastStatus = "unavailable";
+          for (const branch of branches) {
+            const response = await fetch(`https://api.github.com/repos/${repoPath}/git/trees/${branch}?recursive=1`, { headers });
+            if (response.ok) return (await response.json()).tree as Entry[];
+            lastStatus = `GitHub returned ${response.status}`;
+          }
+          const response = await fetch(`https://api.github.com/repos/${repoPath}/contents`, { headers });
+          if (response.ok) return (await response.json()).map((file: { path: string; type: string; size?: number }) => ({ path: file.path, type: file.type === "dir" ? "tree" : "blob", size: file.size })) as Entry[];
+          throw new Error(`Could not load the repository file tree (${lastStatus}; contents ${response.status}).`);
+        };
+        const loadReadme = async () => {
+          for (const branch of branches) {
+            const apiResponse = await fetch(`https://api.github.com/repos/${repoPath}/readme?ref=${branch}`, { headers });
+            if (apiResponse.ok) return decode((await apiResponse.json()).content);
+            const rawResponse = await fetch(`https://raw.githubusercontent.com/${repoPath}/${branch}/README.md`);
+            if (rawResponse.ok) return rawResponse.text();
+          }
+          throw new Error("README.md could not be loaded from GitHub.");
+        };
         const [treeResult, readmeResult, languageResult] = await Promise.allSettled([
-          fetch(`https://api.github.com/repos/${repoPath}/git/trees/${metadata.default_branch}?recursive=1`, { headers }).then(async r => { if (!r.ok) throw new Error("File tree unavailable"); return r.json(); }),
-          fetch(`https://api.github.com/repos/${repoPath}/readme`, { headers }).then(async r => { if (!r.ok) throw new Error("README.md not found"); return r.json(); }),
-          fetch(`https://api.github.com/repos/${repoPath}/languages`, { headers }).then(async r => r.ok ? r.json() : {}),
+          loadTree(), loadReadme(), fetch(`https://api.github.com/repos/${repoPath}/languages`, { headers }).then(async r => r.ok ? r.json() : {}),
         ]);
         if (cancelled) return;
-
-        if (treeResult.status === "fulfilled") {
-          setFiles((treeResult.value.tree ?? []).filter((f: Entry) => f.type === "blob" || f.type === "tree"));
-        } else {
-          const contentsResponse = await fetch(`https://api.github.com/repos/${repoPath}/contents?ref=${metadata.default_branch}`, { headers });
-          if (contentsResponse.ok) {
-            const contents = await contentsResponse.json();
-            setFiles(contents.map((file: { path: string; type: string; size?: number }) => ({ path: file.path, type: file.type === "dir" ? "tree" : "blob", size: file.size })));
-          }
-        }
-        if (readmeResult.status === "fulfilled") setContent(decode(readmeResult.value.content));
-        else { setSelected("README.md"); setContent("README.md is not available in this repository. Select a file from the tree to preview it here."); }
+        if (treeResult.status === "fulfilled") setFiles(treeResult.value.filter((f: Entry) => f.type === "blob" || f.type === "tree"));
+        else setFileError(treeResult.reason instanceof Error ? treeResult.reason.message : "Could not load the repository file tree.");
+        if (readmeResult.status === "fulfilled") setContent(readmeResult.value);
+        else { setReadmeError(readmeResult.reason instanceof Error ? readmeResult.reason.message : "README.md could not be loaded."); setContent("README.md could not be loaded. You can open the repository on GitHub from this page."); }
         if (languageResult.status === "fulfilled") setLanguages(languageResult.value);
         setLoading(false);
       } catch (e) {
-        if (!cancelled) { setError(e instanceof Error ? e.message : "GitHub could not be reached."); setLoading(false); }
+        if (!cancelled) { const message = e instanceof Error ? e.message : "GitHub could not be reached."; setFileError(message); setReadmeError(message); setLoading(false); }
       }
     };
     void loadRepository();
@@ -125,7 +137,15 @@ export function GitHubRepoDetails({ p }: { p: ProjectCase }) {
   const openFile = async (path: string) => {
     setSelected(path);
     if (path.toLowerCase() === "readme.md") {
-      try { const r = await fetch(`https://api.github.com/repos/${repoPath}/readme`); const file = await r.json(); setContent(decode(file.content)); } catch { /* keep previous content */ }
+      for (const branch of [repo?.default_branch, "main", "master"].filter(Boolean)) {
+        try {
+          const r = await fetch(`https://api.github.com/repos/${repoPath}/readme?ref=${branch}`);
+          if (r.ok) { const file = await r.json(); setContent(decode(file.content)); setReadmeError(""); return; }
+          const raw = await fetch(`https://raw.githubusercontent.com/${repoPath}/${branch}/README.md`);
+          if (raw.ok) { setContent(await raw.text()); setReadmeError(""); return; }
+        } catch { /* Try the other default branch name. */ }
+      }
+      setReadmeError("README.md could not be loaded from GitHub.");
       return;
     }
     try { const r = await fetch(`https://api.github.com/repos/${repoPath}/contents/${path}`); if (!r.ok) return; const file = await r.json(); setContent(decode(file.content)); } catch { /* keep previous content */ }
@@ -136,10 +156,11 @@ export function GitHubRepoDetails({ p }: { p: ProjectCase }) {
   const languageTotal = Object.values(languages).reduce((sum, bytes) => sum + bytes, 0);
   return <motion.div className="gh-page" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
     <div className="gh-wrap">
+      <section className="gh-project-summary"><div><span>PROJECT OVERVIEW</span><p>{repo?.description ?? `${p.name} public repository`}</p></div><span className="gh-project-visibility">Public repository</span></section>
       <nav className="gh-tabs"><span className="active"><Book size={15}/> Code</span><a href={`${link}/issues`} target="_blank" rel="noreferrer">Issues</a><a href={`${link}/commits`} target="_blank" rel="noreferrer">Commits</a></nav>
       <div className="gh-grid"><div className="gh-files-column"><div className="gh-branch"><button>⌘ &nbsp;{repo?.default_branch ?? "main"} <ChevronRight size={13}/></button><span>{files.length} files</span></div>
-        <div className="gh-card"><div className="gh-commit"><i>S</i><b>STACKLOOP</b><a href={`${link}/commits`} target="_blank" rel="noreferrer">History</a></div>{loading ? <p className="gh-state">Loading repository files…</p> : error ? <p className="gh-state">{error} <a href={link} target="_blank" rel="noreferrer">Open GitHub ↗</a></p> : entries.length ? entries.map(file => <button className={`gh-file ${selected === file.path ? "selected" : ""}`} key={file.path} style={{ paddingLeft: 12 + Math.max(0, file.path.split("/").length - 1) * 12 }} onClick={() => file.type === "tree" ? window.open(`${link}/tree/${repo?.default_branch ?? "main"}/${file.path}`, "_blank", "noopener,noreferrer") : openFile(file.path)}><span>{file.type === "tree" ? "▰" : "▤"}</span>{file.path.split("/").pop()}<small>{file.type === "tree" ? "Folder" : file.size ? `${Math.max(1, Math.round(file.size / 1024))} KB` : "File"}</small></button>) : <p className="gh-state">No files returned by GitHub. <a href={`${link}/tree/${repo?.default_branch ?? "main"}`} target="_blank" rel="noreferrer">Browse repository ↗</a></p>}</div></div>
-        <section className="gh-reader"><div className="gh-card gh-readme"><div className="gh-readme-title"><span><Book size={15}/> {selected}</span><a href={`${link}/blob/${repo?.default_branch ?? "main"}/${selected}`} target="_blank" rel="noreferrer">View on GitHub ↗</a></div>{loading || error ? <p className="gh-state">{loading ? "Loading README…" : error}</p> : selected.toLowerCase().endsWith(".md") ? <MarkdownReadme source={content} /> : <pre>{content}</pre>}</div></section>
+        <div className="gh-card"><div className="gh-commit"><i>S</i><b>STACKLOOP</b><a href={`${link}/commits`} target="_blank" rel="noreferrer">History</a></div>{loading ? <p className="gh-state">Loading repository files…</p> : fileError ? <p className="gh-state">{fileError} <a href={`${link}/tree/${repo?.default_branch ?? "main"}`} target="_blank" rel="noreferrer">Browse GitHub ↗</a></p> : entries.length ? entries.map(file => <button className={`gh-file ${selected === file.path ? "selected" : ""}`} key={file.path} style={{ paddingLeft: 12 + Math.max(0, file.path.split("/").length - 1) * 12 }} onClick={() => file.type === "tree" ? window.open(`${link}/tree/${repo?.default_branch ?? "main"}/${file.path}`, "_blank", "noopener,noreferrer") : openFile(file.path)}><span>{file.type === "tree" ? "▰" : "▤"}</span>{file.path.split("/").pop()}<small>{file.type === "tree" ? "Folder" : file.size ? `${Math.max(1, Math.round(file.size / 1024))} KB` : "File"}</small></button>) : <p className="gh-state">No files returned by GitHub. <a href={`${link}/tree/${repo?.default_branch ?? "main"}`} target="_blank" rel="noreferrer">Browse repository ↗</a></p>}</div></div>
+        <section className="gh-reader"><div className="gh-card gh-readme"><div className="gh-readme-title"><span><Book size={15}/> {selected}</span><a href={`${link}/blob/${repo?.default_branch ?? "main"}/${selected}`} target="_blank" rel="noreferrer">View on GitHub ↗</a></div>{loading ? <p className="gh-state">Loading README…</p> : readmeError ? <p className="gh-state">{readmeError} <a href={link} target="_blank" rel="noreferrer">Open README on GitHub ↗</a></p> : selected.toLowerCase().endsWith(".md") ? <MarkdownReadme source={content} /> : <pre>{content}</pre>}</div></section>
         <aside><h2>About</h2><p>{repo?.description ?? `${p.name} project repository`}</p><a href={link} target="_blank" rel="noreferrer"><GithubMark/> Open source repository ↗</a><div className="gh-stats"><span><Star size={14}/>{repo?.stargazers_count ?? "—"} stars</span><span><GitFork size={14}/>{repo?.forks_count ?? "—"} forks</span></div>{languageTotal > 0 && <><hr/><h2>Languages</h2><div className="gh-language-bar">{Object.entries(languages).map(([name, bytes]) => <i key={name} style={{ width: `${bytes / languageTotal * 100}%`, background: languageColors[name] ?? "#8b949e" }}/>)}</div><div className="gh-language-list">{Object.entries(languages).sort((a, b) => b[1] - a[1]).map(([name, bytes]) => <span key={name}><i style={{ background: languageColors[name] ?? "#8b949e" }}/>{name}<b>{(bytes / languageTotal * 100).toFixed(1)}%</b></span>)}</div></>}<hr/><h2>Details</h2><p>{repo?.language ?? "Repository"}{repo?.language ? " project" : ""}</p>{repo?.license?.spdx_id && <p>License · {repo.license.spdx_id}</p>}<div className="gh-note">Files and README load from the linked public GitHub project.</div></aside>
       </div>
     </div>

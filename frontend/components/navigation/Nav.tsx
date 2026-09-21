@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useScroll, useSpring, useTransform, useMotionTemplate } from "framer-motion";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { T } from "@/lib/theme";
 import { NAV_ITEMS, STATUS_LINES } from "@/data/site";
 import { scrollToSection } from "@/lib/scroll";
@@ -34,7 +34,7 @@ const LIGHT_BORDER_RGB = "219, 227, 211";
 export function Nav() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string>("hero");
-  const { openId, setOpenId } = useCaseStudy();
+  const { openId, setOpenId, setReturnSection } = useCaseStudy();
   const activeProject = PROJECTS.find((project) => project.id === openId);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
@@ -85,9 +85,7 @@ export function Nav() {
   const navRadius = useTransform(navT, [0, 1], [0, 16]);
   const navShadow = useMotionTemplate`0 16px 36px -12px rgba(0, 0, 0, ${useTransform(navT, [0, 1], [0, 0.55])})`;
   const navMaxWidth = useTransform(navT, [0, 1], [1276, 1040]);
-  const projectLinkGap = useTransform(navT, [0, 1], [24, 10]);
-  const projectLinkScale = useTransform(navT, [0, 1], [1, 0.91]);
-  const projectLinkFontSize = useTransform(navT, [0, 1], [13, 11]);
+  const projectLinkPaddingY = useTransform(navT, [0, 1], [6, 2]);
 
   // Scroll-spy: highlight the nav tab of whichever section crosses the
   // active zone (~35% viewport height) while scrolling.
@@ -130,9 +128,9 @@ export function Nav() {
   const go = (id: string) => {
     if (openId) {
       setActive(id === "team" ? "team" : id);
+      setReturnSection(id);
       setOpenId(null);
       setOpen(false);
-      window.setTimeout(() => scrollToSection(id), 80);
       return;
     }
     scrollToSection(id);
@@ -171,6 +169,7 @@ export function Nav() {
       }}
     >
       <motion.div
+        className={openId ? "pf-nav-project" : "pf-nav-main"}
         key={openId ? "project-nav" : "main-nav"}
         initial={{ opacity: 0, y: -7 }}
         animate={{ opacity: 1, y: 0 }}
@@ -268,15 +267,13 @@ export function Nav() {
           ))}
         </div>}
 
-        {openId && <motion.div className="pf-project-links" style={{ gap: projectLinkGap }}>
+        {openId && <motion.div className="pf-project-links" layout>
           {[{ id: "hero", label: "HOME" }, { id: "team", label: "ABOUT US" }].map((item) => (
             <motion.button
               key={item.id}
               className="pf-mono"
               onClick={() => go(item.id)}
-              style={{ position: "relative", scale: projectLinkScale, background: "none", border: "none", color: active === item.id ? T.text : T.dim, fontSize: projectLinkFontSize, letterSpacing: "0.08em", cursor: "pointer", padding: "6px 0", transition: "color .25s ease" }}
-              whileHover={{ scale: 1.06, y: -1 }}
-              transition={{ type: "spring", stiffness: 380, damping: 28 }}
+              style={{ position: "relative", background: "none", border: "none", color: active === item.id ? T.text : T.dim, fontSize: 13.5, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", paddingTop: projectLinkPaddingY, paddingBottom: projectLinkPaddingY, paddingLeft: 0, paddingRight: 0, transition: "color .25s ease" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = T.text)}
               onMouseLeave={(e) => (e.currentTarget.style.color = active === item.id ? T.text : T.dim)}
             >
@@ -321,11 +318,14 @@ export function Nav() {
           </button>
         </Magnetic>}
 
-        {openId && <motion.button className="pf-project-start pf-mono" style={{ scale: projectLinkScale }} whileHover={{ scale: 1.04, y: -1 }} transition={{ type: "spring", stiffness: 380, damping: 28 }} onClick={() => go("contact")}>START A PROJECT <ArrowRight size={12}/></motion.button>}
+        {openId && <motion.button className="pf-project-start pf-mono" onClick={() => go("contact")}>START A PROJECT <ArrowRight size={12}/></motion.button>}
+
+        {openId && activeProject?.repoUrl && <a className="pf-project-repo pf-mono" href={activeProject.repoUrl} target="_blank" rel="noreferrer">
+          OPEN REPOSITORY <ExternalLink size={12}/>
+        </a>}
 
         {openId && <div className="pf-project-nav-actions">
           <button className="pf-mono" onClick={() => setOpenId(null)}><ArrowLeft size={14}/> Back to projects</button>
-          {activeProject?.repoUrl && <a className="pf-mono" href={activeProject.repoUrl} target="_blank" rel="noreferrer">Open repository <ArrowUpRight size={13}/></a>}
         </div>}
 
         <ThemeToggle theme={theme} onToggle={toggleTheme} size={32} />

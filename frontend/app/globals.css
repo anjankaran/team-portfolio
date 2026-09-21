@@ -370,3 +370,44 @@ body {
 @media(max-width:1100px){.pf-project-nav-actions a{font-size:0;padding:9px}.pf-project-nav-actions a svg{width:15px;height:15px}.pf-project-start{font-size:0;padding:9px}.pf-project-start svg{width:15px;height:15px}}
 @media(max-width:760px){.pf-project-links{gap:12px}.pf-project-links button{font-size:9px}.pf-project-start{display:none}}
 @media(max-width:560px){.pf-project-links{gap:10px}.pf-project-links button{font-size:8px}.pf-project-nav-actions button{padding:8px}}
+/* Keep project nav links positioned like the main nav; the gap and whole group follow the navbar scroll transform. */
+.pf-project-links{flex:0 0 auto;justify-content:flex-start;gap:32px}
+/* Clean project navbar layout: identity and section links together, primary action centered, back and theme at right. */
+.pf-nav-project{display:grid!important;grid-template-columns:auto auto minmax(140px,1fr) auto auto;align-items:center;justify-content:initial!important;gap:clamp(10px,1.3vw,18px)!important}
+.pf-nav-project .pf-project-links{flex:none;min-width:0;justify-content:flex-start;gap:20px}
+.pf-nav-project .pf-project-start{justify-self:center}
+.pf-nav-project .pf-project-nav-actions{justify-self:end}
+.pf-project-nav-actions button{padding:9px 12px}
+@media(max-width:1100px){.pf-nav-project{grid-template-columns:auto auto minmax(40px,1fr) auto auto;gap:10px!important}.pf-nav-project .pf-project-links{gap:12px}}
+@media(max-width:760px){.pf-nav-project{grid-template-columns:auto 1fr auto auto;gap:8px!important}.pf-nav-project .pf-project-start{display:none}.pf-nav-project .pf-project-links{gap:10px}.pf-nav-project .pf-project-links button{font-size:10px}}
+@media(max-width:560px){.pf-nav-project .pf-project-links{gap:8px}.pf-nav-project .pf-project-links button{font-size:9px}.pf-nav-project .pf-disp{font-size:12px!important}}
+@media(max-width:1100px){.pf-nav-project .pf-project-start{font-size:10px!important}.pf-nav-project .pf-project-start svg{width:12px;height:12px}}
+.gh-project-summary{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:15px 0 18px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.gh-project-summary>div>span{font:10px var(--font-mono),monospace;letter-spacing:.12em;color:var(--blue)}
+.gh-project-summary p{margin:5px 0 0;color:var(--dim);font-size:13px;line-height:1.5}
+.gh-project-visibility{flex:none;border:1px solid var(--border-lit);border-radius:20px;padding:3px 10px;color:var(--dim);font-size:11px}
+@media(max-width:560px){.gh-project-summary{align-items:flex-start}.gh-project-summary p{font-size:12px}}
+/* Final project view spacing: keep actions adjacent to links and leave flexible space before Back. */
+.pf-nav-project{grid-template-columns:auto auto auto minmax(0,1fr) auto!important;gap:clamp(10px,1.2vw,16px)!important}
+.pf-nav-project .pf-project-links{gap:16px}
+.pf-nav-project .pf-project-start{justify-self:start}
+.pf-nav-project .pf-project-nav-actions{justify-self:end}
+@media(max-width:1100px){.pf-nav-project{grid-template-columns:auto auto auto minmax(0,1fr) auto!important;gap:9px!important}.pf-nav-project .pf-project-links{gap:10px}}
+@media(max-width:760px){.pf-nav-project{grid-template-columns:auto auto 1fr auto!important}.pf-nav-project .pf-project-start{display:none}}
+/* Start the repository at its top edge, not at the previous portfolio scroll position. */
+.gh-page{padding-top:94px}
+.gh-project-summary{padding-top:8px;padding-bottom:12px;margin-bottom:0}
+.gh-tabs{margin-top:0}
+/* Evenly distribute every project-nav option. The growing gaps shrink naturally with the animated navbar width. */
+.pf-nav-project{display:grid!important;grid-template-columns:repeat(7,max-content)!important;justify-content:space-between!important;align-items:center;gap:0!important}
+.pf-nav-project .pf-project-links{display:contents;flex:none}
+.pf-nav-project .pf-project-links button{justify-self:start}
+.pf-nav-project .pf-project-start{justify-self:center}
+.pf-nav-project .pf-project-repo{justify-self:center;display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid var(--border-lit);border-radius:4px;color:var(--blue);text-decoration:none;font-size:10px;letter-spacing:.06em;white-space:nowrap;transition:background .2s ease,border-color .2s ease}
+.pf-nav-project .pf-project-repo:hover{background:var(--surface);border-color:var(--blue)}
+.pf-nav-project .pf-project-nav-actions{justify-self:end}
+@media(max-width:1100px){.pf-nav-project{grid-template-columns:repeat(7,max-content)!important}.pf-project-nav-actions button{font-size:10px}.pf-nav-project .pf-project-repo{font-size:9px;padding:8px}}
+@media(max-width:760px){.pf-nav-project{grid-template-columns:repeat(6,max-content)!important}.pf-nav-project .pf-project-start{display:none}}
+@media(max-width:560px){.pf-nav-project{grid-template-columns:repeat(6,max-content)!important;justify-content:space-between!important}.pf-nav-project .pf-project-repo{font-size:0;padding:8px}.pf-nav-project .pf-project-repo svg{width:14px;height:14px}}
+.gh-page{width:100%;overflow-x:clip}
+.gh-wrap{width:100%;max-width:1320px}
