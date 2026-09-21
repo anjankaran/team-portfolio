@@ -184,6 +184,10 @@ export function LiveWork() {
 
   // Non-active sites keep their catalog order behind the active one.
   const order = [...LIVE_SITES.map((s) => s.id).filter((id) => id !== active), active];
+  // Kept alongside the commented preview UI so it can be restored with that block.
+  void active;
+  void activeSite;
+  void order;
 
   return (
     <SectionWrap id="live-work" style={{ paddingTop: 56 }}>
@@ -198,7 +202,8 @@ export function LiveWork() {
         </p>
       </Reveal>
 
-      <div style={{ display: "flex", gap: 8, marginTop: 40, flexWrap: "wrap" }}>
+      {/* Live project selector and descriptions stay hidden until the live showcase is ready. */}
+      {/* <div style={{ display: "flex", gap: 8, marginTop: 40, flexWrap: "wrap" }}>
         {LIVE_SITES.map((s, i) => (
           <Reveal key={s.id} delay={i * 90}>
             <button
@@ -265,7 +270,7 @@ export function LiveWork() {
         <p style={{ color: T.dim, marginTop: 24, fontSize: 13, lineHeight: 1.6, maxWidth: 620 }}>
           {activeSite.description}
         </p>
-      </Reveal>
+      </Reveal> */}
 
       <style>{`
         @keyframes pf-spin { to { transform: rotate(360deg); } }
