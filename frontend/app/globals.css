@@ -1,0 +1,296 @@
+:root {
+  --bg: #0a0c09;
+  --bg2: #0e110d;
+  --surface: #141812;
+  --surface2: #1b2018;
+  --border: #262b22;
+  --border-lit: #38402f;
+  --text: #f1eee3;
+  --dim: #a7ab98;
+  --faint: #838a76;
+  --blue: #4fa98c;
+  --violet: #74bb7e;
+  --amber: #e3b462;
+  --amber-dim: #6b5730;
+  /* Hero's flow-node cards and core sphere are deliberately near-black in
+     dark mode, hardcoded rather than built from --surface — they're meant
+     to read as distinct "device" panels, not just another card. This token
+     lets them repaint in light mode too, without becoming plain white like
+     every other surface: they go green instead, matching the brand accent.
+     --team-card-bg / --team-chip-bg are the same idea for the team member
+     cards, kept as SEPARATE tokens because their original dark-mode value
+     (pure #000000 for the card, #0e110d for the skill chips) was never the
+     same as Hero's #141812 — sharing one token between them would quietly
+     change one component's dark-mode color while "fixing" the other's
+     light mode, which is exactly the bug this split corrects. */
+  --dark-surface: #141812;
+  --team-card-bg: #000000;
+  --team-chip-bg: #0e110d;
+  /* Text/border tuned specifically for content sitting on --dark-surface
+     or --team-card-bg. Dark mode: identical to the original hardcoded
+     values these replaced (no visual change there). Light mode: those
+     surfaces go green, so this gets its own lighter pairing instead of
+     inheriting one meant for a white surface. */
+  --on-dark-surface-dim: #a7ab98;
+  --on-dark-surface-border: #262b22;
+}
+
+/* Light mode — same green/amber accents, neutral surfaces flipped to a
+   warm off-white with a faint green cast instead of charcoal. Toggled via
+   [data-theme] on <html> (see ThemeToggle / the inline anti-flash script
+   in layout.tsx), not prefers-color-scheme — this is a user choice, not an
+   OS-inherited default. */
+:root[data-theme="light"] {
+  --bg: #faf8f0;
+  --bg2: #f3f1e6;
+  --surface: #ffffff;
+  --surface2: #f6f4e9;
+  --border: #e0ddc8;
+  --border-lit: #c7c2a4;
+  --text: #1a2410;
+  --dim: #4c5640;
+  --faint: #737d64;
+  --dark-surface: #0f5c34;
+  --team-card-bg: #0f5c34;
+  --team-chip-bg: #ffffff;
+  --on-dark-surface-dim: #c9cdbc;
+  --on-dark-surface-border: rgba(255, 255, 255, 0.18);
+}
+
+/* Smooth cross-fade for the dominant background/text switch when toggling
+   theme. Deliberately scoped to just the page root, not a blanket
+   selector — components already define their own transitions (e.g.
+   .server-box's stroke/fill), and transitioning every element site-wide
+   risks fighting those or tanking perf on toggle. */
+body {
+  transition: background-color 320ms ease, color 320ms ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 84px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body), "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--amber);
+  color: #16110a;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-lit);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--faint);
+}
+
+.pf-disp {
+  font-family: var(--font-display), "Space Grotesk", sans-serif;
+}
+.pf-mono {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  letter-spacing: 0.03em;
+}
+
+/* The STACKLOOP wordmark logotype — heavier and tighter than the Space
+   Grotesk headings used everywhere else, matching the brand mark. */
+.pf-wordmark {
+  font-family: var(--font-wordmark), "Poppins", sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.pf-wordmark-loop {
+  background: linear-gradient(120deg, var(--violet) 0%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Global grid backdrop — precise technical grid softened by an organic,
+   dappled-light glow (forest canopy meets circuit board). */
+.pf-grid-backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(ellipse 60% 40% at 20% 10%, rgba(116, 187, 126, 0.05), transparent 60%),
+    radial-gradient(ellipse 50% 35% at 85% 30%, rgba(79, 169, 140, 0.04), transparent 60%),
+    linear-gradient(rgba(38, 43, 34, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(38, 43, 34, 0.16) 1px, transparent 1px);
+  background-size: auto, auto, 64px 64px, 64px 64px;
+  mask-image: radial-gradient(circle at 50% 0%, black, transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at 50% 0%, black, transparent 78%);
+}
+
+/* Light mode drops the technical grid entirely — graph-paper lines read as
+   a dark-mode "circuit board" motif and just look busy on a warm white
+   page. Instead: soft green + warm gold color washes only, no grid, for an
+   airier, more editorial feel while still keeping some atmosphere. */
+:root[data-theme="light"] .pf-grid-backdrop {
+  background-image: radial-gradient(ellipse 65% 50% at 12% 6%, rgba(31, 122, 74, 0.16), transparent 62%),
+    radial-gradient(ellipse 55% 45% at 90% 22%, rgba(227, 180, 98, 0.14), transparent 60%),
+    radial-gradient(ellipse 60% 45% at 45% 98%, rgba(47, 125, 104, 0.13), transparent 62%);
+  background-size: auto;
+}
+
+@keyframes pf-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes pf-pulse-scale {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.7);
+    opacity: 0.35;
+  }
+}
+@keyframes pf-dash {
+  to {
+    stroke-dashoffset: -200;
+  }
+}
+@keyframes pf-flow {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+@keyframes pf-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes pf-scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+@keyframes pf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pf-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+@keyframes pf-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes pf-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+@keyframes pf-ring-pulse {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.pf-blink-cursor::after {
+  content: "▍";
+  animation: pf-blink 1s step-start infinite;
+  color: var(--amber);
+}
+
+.pf-btn {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 22px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 1px solid var(--border-lit);
+  background: transparent;
+  color: var(--text);
+  text-decoration: none;
+}
+.pf-btn:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+  transform: translateY(-1px);
+}
+.pf-btn-solid {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+.pf-btn-solid:hover {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #16110a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
