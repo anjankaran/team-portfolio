@@ -294,3 +294,52 @@ body {
     transition-duration: 0.001ms !important;
   }
 }
+/* GitHub inspired repository detail view */
+.gh-page{--gh-bg:#0d1117;--gh-panel:#161b22;--gh-border:#30363d;--gh-text:#e6edf3;--gh-muted:#8b949e;position:relative;z-index:2;min-height:100vh;background:var(--gh-bg);color:var(--gh-text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:64px}
+.gh-page a{color:#58a6ff;text-decoration:none}.gh-page a:hover{text-decoration:underline}.gh-top{border-bottom:1px solid var(--gh-border);background:#010409}.gh-top>div,.gh-wrap{max-width:1320px;margin:auto;padding-left:28px;padding-right:28px}.gh-top>div{height:62px;display:flex;align-items:center;gap:11px;font-weight:600}.gh-top b{color:var(--gh-muted);font-weight:400}.gh-top button{margin-left:auto;display:flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--gh-border);color:var(--gh-text);border-radius:6px;padding:7px 11px;cursor:pointer}.gh-header{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;padding:32px 0 22px}.gh-header h1{font-size:20px;margin:0;font-weight:400}.gh-header h1 span{color:#58a6ff}.gh-header small{border:1px solid var(--gh-border);border-radius:20px;color:var(--gh-muted);font-size:11px;padding:1px 8px;margin-left:6px}.gh-header p,.gh-grid aside p{color:var(--gh-muted);margin:10px 0 0}.gh-view{display:flex;align-items:center;gap:6px;border:1px solid var(--gh-border);border-radius:6px;padding:7px 11px;color:var(--gh-text)!important;font-size:12px}.gh-tabs{display:flex;gap:25px;border-bottom:1px solid var(--gh-border);margin-bottom:22px}.gh-tabs>*{height:48px;display:flex;align-items:center;gap:8px;color:var(--gh-muted)}.gh-tabs .active{border-bottom:2px solid #f78166;color:var(--gh-text);font-weight:600}.gh-grid{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:24px}.gh-grid section{min-width:0}.gh-branch{display:flex;align-items:center;gap:15px;margin-bottom:14px;color:var(--gh-muted);font-size:12px}.gh-branch a{margin-left:auto}.gh-branch button{display:flex;align-items:center;gap:10px;background:var(--gh-panel);border:1px solid var(--gh-border);border-radius:6px;padding:7px 11px;color:var(--gh-text);font-weight:600}.gh-card{border:1px solid var(--gh-border);border-radius:6px;overflow:hidden;margin-bottom:18px}.gh-commit{height:48px;background:var(--gh-panel);border-bottom:1px solid var(--gh-border);display:flex;align-items:center;gap:9px;padding:0 14px;font-size:12px}.gh-commit i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#8957e5;color:white;font-style:normal}.gh-commit span{color:var(--gh-muted)}.gh-commit a{margin-left:auto}.gh-file{display:flex;align-items:center;text-align:left;width:100%;height:39px;padding:0 14px;gap:10px;border:0;border-bottom:1px solid #21262d;background:transparent;color:var(--gh-text);cursor:pointer}.gh-file:last-child{border-bottom:0}.gh-file:hover,.gh-file.selected{background:#161b22}.gh-file>span{color:var(--gh-muted)}.gh-file small{margin-left:auto;color:var(--gh-muted)}.gh-readme-title{height:46px;padding:0 15px;background:var(--gh-panel);border-bottom:1px solid var(--gh-border);display:flex;align-items:center;justify-content:space-between}.gh-readme-title span,.gh-readme-title a{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}.gh-readme pre{margin:0;padding:28px 34px;white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--gh-text)}.gh-state{padding:28px;color:var(--gh-muted)}.gh-grid aside{font-size:13px}.gh-grid aside h2{font-size:15px;margin:0 0 10px}.gh-grid aside>a{display:flex;align-items:center;gap:7px;margin-top:14px;font-size:12px;overflow-wrap:anywhere}.gh-stats{display:flex;gap:15px;margin-top:18px;color:var(--gh-muted)}.gh-stats span{display:flex;align-items:center;gap:6px}.gh-grid aside hr{border:0;border-top:1px solid var(--gh-border);margin:20px 0}.gh-note{margin-top:20px;border:1px solid var(--gh-border);border-radius:6px;padding:12px;color:var(--gh-muted);font-size:12px}
+@media(max-width:850px){.gh-grid{grid-template-columns:minmax(0,1fr)}.gh-grid aside{border-top:1px solid var(--gh-border);padding-top:20px}.gh-wrap,.gh-top>div{padding-left:18px;padding-right:18px}}
+@media(max-width:560px){.gh-header{display:block}.gh-view{margin-top:16px;width:max-content}.gh-header h1{font-size:16px}.gh-commit span{display:none}.gh-readme pre{padding:20px 17px}.gh-top button{font-size:0}.gh-top button svg{width:17px;height:17px}}
+/* Three-column repository layout: file tree, README, and repository metadata. */
+.gh-grid{grid-template-columns:250px minmax(0,1fr) 250px;gap:22px;align-items:start}
+.gh-files-column,.gh-reader{min-width:0}
+.gh-branch{gap:10px}
+.gh-branch a{display:none}
+.gh-file{padding-left:9px;padding-right:9px;gap:8px}
+.gh-file>span{flex:none}
+.gh-file small{font-size:10px}
+.gh-commit span{display:none}
+.gh-language-bar{height:8px;display:flex;overflow:hidden;border-radius:8px;margin:13px 0}
+.gh-language-bar i{height:100%}
+.gh-language-list{display:grid;gap:9px}
+.gh-language-list span{display:flex;align-items:center;gap:7px;font-size:12px}
+.gh-language-list i{width:10px;height:10px;border-radius:50%}
+.gh-language-list b{margin-left:auto;font-weight:400;color:var(--gh-muted)}
+@media(max-width:1100px){.gh-grid{grid-template-columns:220px minmax(0,1fr)}.gh-grid aside{grid-column:2;border-top:1px solid var(--gh-border);padding-top:20px}}
+@media(max-width:850px){.gh-grid{grid-template-columns:minmax(0,1fr)}.gh-files-column,.gh-reader,.gh-grid aside{grid-column:1}}
+/* Keep the GitHub inspired repository layout inside the active Stackloop theme. */
+.gh-page{--gh-bg:var(--bg);--gh-panel:var(--surface);--gh-border:var(--border);--gh-text:var(--text);--gh-muted:var(--dim);background:var(--bg);color:var(--text)}
+.gh-page a{color:var(--blue)}
+.gh-top{background:var(--bg2);border-color:var(--border)}
+.gh-header h1 span,.gh-header small{color:var(--blue)}
+.gh-header small,.gh-view,.gh-top button,.gh-branch button,.gh-card,.gh-note{border-color:var(--border)}
+.gh-view,.gh-top button{color:var(--text)!important;background:var(--surface)}
+.gh-tabs .active{border-bottom-color:var(--violet)}
+.gh-commit{background:var(--surface2);border-color:var(--border)}
+.gh-commit i{background:var(--violet);color:var(--bg)}
+.gh-file{border-color:var(--border);color:var(--text)}
+.gh-file:hover,.gh-file.selected{background:var(--surface2)}
+.gh-readme-title{background:var(--surface2);border-color:var(--border)}
+.gh-language-list b{color:var(--dim)}
+.gh-note{background:var(--surface)}
+/* Single repository heading with compact actions; the global nav is the only other header. */
+.gh-header{align-items:center;padding-top:28px}
+.gh-header-actions{display:flex;align-items:center;gap:9px;flex:none}
+.gh-header-actions .gh-view{font:inherit;cursor:pointer}
+.gh-wrap{padding-top:1px}
+.gh-files-column .gh-card{min-height:96px}
+.gh-file{font-family:inherit}
+.gh-file>span{color:var(--blue)}
+@media(max-width:560px){.gh-header-actions{margin-top:14px}.gh-header{align-items:flex-start}}
+/* The repository sits below the fixed animated navbar, leaving the page title unobscured. */
+.gh-page{padding-top:104px}
+@media(max-width:600px){.gh-page{padding-top:88px}}

@@ -13,9 +13,44 @@ export interface ProjectCase {
   result: string;
   stack: string[];
   status: string;
+  repoUrl?: string;
 }
 
 export const PROJECTS: ProjectCase[] = [
+  {
+    id: "sanbot-agent-v1",
+    name: "Sanbot-Agen-V1",
+    tag: "OPEN SOURCE REPOSITORY",
+    color: "#2f81f7",
+    headline: "Sanbot-Agen-V1 open source repository.",
+    problem: "",
+    architecture: [],
+    build: [],
+    ai: "",
+    automation: "",
+    integration: [],
+    result: "",
+    stack: ["GitHub", "Repository"],
+    status: "PUBLIC REPOSITORY",
+    repoUrl: "https://github.com/pritamrouth/Sanbot-Agen-V1",
+  },
+  {
+    id: "shopbot-nova",
+    name: "Shopbot Nova",
+    tag: "OPEN SOURCE REPOSITORY",
+    color: "#2f81f7",
+    headline: "Shopbot Nova open source repository.",
+    problem: "",
+    architecture: [],
+    build: [],
+    ai: "",
+    automation: "",
+    integration: [],
+    result: "",
+    stack: ["GitHub", "Repository"],
+    status: "PUBLIC REPOSITORY",
+    repoUrl: "https://github.com/pritamrouth/shopbot-nova",
+  },
   {
     id: "ops",
     name: "Intelligent Operations Platform",

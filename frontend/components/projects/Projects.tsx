@@ -10,6 +10,7 @@ import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Reveal } from "@/components/shared/Reveal";
 import { Tag } from "@/components/shared/Tag";
 import { useCaseStudy } from "@/lib/case-study-context";
+import { GitHubRepoDetails } from "@/components/projects/GitHubRepoDetails";
 
 // lucide-react drops brand/logo icons, so the GitHub mark is drawn directly —
 // the real octocat path, not a generic git-branch stand-in.
@@ -48,7 +49,7 @@ function FlowRow({ label, items, color, id }: { label: string; items: string[]; 
   );
 }
 
-export function CaseStudy({ p }: { p: ProjectCase }) {
+function CaseStudyLegacy({ p }: { p: ProjectCase }) {
   const { setOpenId } = useCaseStudy();
   const onClose = () => setOpenId(null);
   const [activeSection, setActiveSection] = useState<string>("problem");
@@ -516,4 +517,8 @@ export function Projects() {
       </Reveal>
     </SectionWrap>
   );
+}
+
+export function CaseStudy({ p }: { p: ProjectCase }) {
+  return p.repoUrl ? <GitHubRepoDetails p={p} /> : <CaseStudyLegacy p={p} />;
 }
