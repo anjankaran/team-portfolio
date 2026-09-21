@@ -190,11 +190,11 @@ export function LiveWork() {
       <Reveal>
         <Eyebrow color={T.blue}>Live In Production</Eyebrow>
         <h2 className="pf-disp" style={{ fontSize: "clamp(28px,4.5vw,46px)", fontWeight: 600, maxWidth: 760, letterSpacing: "-0.02em", margin: 0 }}>
-          See it running
+          Coming Soon..
         </h2>
+
         <p style={{ color: T.dim, marginTop: 16, maxWidth: 620, fontSize: 15, lineHeight: 1.6 }}>
-          These aren&apos;t screenshots or mockups — the windows below load the actual live product,
-          right now, in an iframe.
+          A live, interactive showcase of our work, running in real time.
         </p>
       </Reveal>
 

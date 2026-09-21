@@ -343,3 +343,30 @@ body {
 /* The repository sits below the fixed animated navbar, leaving the page title unobscured. */
 .gh-page{padding-top:104px}
 @media(max-width:600px){.gh-page{padding-top:88px}}
+.pf-project-nav-actions{display:flex;align-items:center;gap:9px;flex:none}
+.pf-project-nav-actions button,.pf-project-nav-actions a{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border-lit);border-radius:5px;background:var(--surface);color:var(--text);padding:9px 12px;font-size:11px;text-decoration:none;white-space:nowrap;cursor:pointer}
+.pf-project-nav-actions a{border-color:var(--blue);color:var(--blue)}
+.pf-project-nav-actions button:hover,.pf-project-nav-actions a:hover{background:var(--surface2);text-decoration:none}
+@media(max-width:720px){.pf-project-nav-actions a{display:none}.pf-project-nav-actions button{font-size:0;padding:9px}.pf-project-nav-actions button svg{width:17px;height:17px}}
+.gh-markdown{padding:28px 34px;line-height:1.65;color:var(--text);overflow-wrap:anywhere}
+.gh-markdown>*:first-child{margin-top:0}
+.gh-markdown>*:last-child{margin-bottom:0}
+.gh-markdown h1,.gh-markdown h2,.gh-markdown h3,.gh-markdown h4{padding-bottom:.3em;border-bottom:1px solid var(--border);line-height:1.25}
+.gh-markdown h1{font-size:2em}.gh-markdown h2{font-size:1.5em}.gh-markdown h3{font-size:1.25em}
+.gh-markdown p,.gh-markdown ul,.gh-markdown ol,.gh-markdown blockquote{margin:0 0 16px}
+.gh-markdown ul,.gh-markdown ol{padding-left:2em}
+.gh-markdown li+li{margin-top:5px}
+.gh-markdown blockquote{margin-left:0;padding:0 1em;color:var(--dim);border-left:3px solid var(--border-lit)}
+.gh-markdown hr{height:1px;border:0;background:var(--border);margin:24px 0}
+.gh-markdown code:not(.gh-code-block code){font: .9em var(--font-mono),monospace;padding:.18em .4em;border-radius:4px;background:var(--surface2)}
+.gh-markdown .gh-code-block{padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;overflow:auto;font:12px/1.6 var(--font-mono),monospace}
+.gh-markdown .gh-code-block code{font:inherit;white-space:pre}
+@media(max-width:560px){.gh-markdown{padding:20px 17px}.gh-markdown h1{font-size:1.65em}.gh-markdown h2{font-size:1.35em}}
+.pf-project-links{display:flex;align-items:center;justify-content:center;gap:clamp(8px,1.4vw,22px);flex:1;min-width:0}
+.pf-project-links button{position:relative;background:none;border:0;color:var(--dim);padding:8px 0;font-size:11px;letter-spacing:.07em;cursor:pointer;white-space:nowrap}
+.pf-project-links button:hover{color:var(--text)}
+.pf-project-start{display:inline-flex;align-items:center;gap:7px;flex:none;background:transparent;border:1px solid var(--violet);border-radius:4px;color:var(--text);padding:9px 12px;font-size:10px;letter-spacing:.05em;cursor:pointer;white-space:nowrap}
+.pf-project-start:hover{background:color-mix(in srgb,var(--violet) 14%,transparent)}
+@media(max-width:1100px){.pf-project-nav-actions a{font-size:0;padding:9px}.pf-project-nav-actions a svg{width:15px;height:15px}.pf-project-start{font-size:0;padding:9px}.pf-project-start svg{width:15px;height:15px}}
+@media(max-width:760px){.pf-project-links{gap:12px}.pf-project-links button{font-size:9px}.pf-project-start{display:none}}
+@media(max-width:560px){.pf-project-links{gap:10px}.pf-project-links button{font-size:8px}.pf-project-nav-actions button{padding:8px}}

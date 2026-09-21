@@ -1,14 +1,15 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useScroll, useSpring, useTransform, useMotionTemplate } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { T } from "@/lib/theme";
 import { NAV_ITEMS, STATUS_LINES } from "@/data/site";
 import { scrollToSection } from "@/lib/scroll";
 import { useCaseStudy } from "@/lib/case-study-context";
 import { Magnetic } from "@/components/shared/Magnetic";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import { PROJECTS } from "@/data/projects";
 
 // Continuous section -> nav-tab coverage across the whole page.
 // Untracked gaps (Live Demos, Tech Stack, Process) inherit their neighbour tab
@@ -34,9 +35,10 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string>("hero");
   const { openId, setOpenId } = useCaseStudy();
+  const activeProject = PROJECTS.find((project) => project.id === openId);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
-  // Read the persisted choice once on mount — the inline script in
+  // Read the persisted choice once on mount â€” the inline script in
   // layout.tsx already applied it to <html> before paint, this just syncs
   // this component's own state so the pill background below picks the
   // right RGB triple instead of assuming dark.
@@ -56,14 +58,14 @@ export function Nav() {
       try {
         localStorage.setItem("pf-theme", next);
       } catch {
-        // Private browsing / storage disabled — theme just won't persist.
+        // Private browsing / storage disabled â€” theme just won't persist.
       }
       return next;
     });
   };
 
   // Flush, invisible bar over the hero that shrinks into a small floating
-  // glass "pill" as the page scrolls — noticeably shorter and narrower than
+  // glass "pill" as the page scrolls â€” noticeably shorter and narrower than
   // the full-width bar, inset from the edges, with a soft shadow. The pill
   // itself uses literal rgba() (not the CSS-var tokens) because Framer's
   // useMotionTemplate needs real numbers to animate the alpha channel, so
@@ -83,6 +85,9 @@ export function Nav() {
   const navRadius = useTransform(navT, [0, 1], [0, 16]);
   const navShadow = useMotionTemplate`0 16px 36px -12px rgba(0, 0, 0, ${useTransform(navT, [0, 1], [0, 0.55])})`;
   const navMaxWidth = useTransform(navT, [0, 1], [1276, 1040]);
+  const projectLinkGap = useTransform(navT, [0, 1], [24, 10]);
+  const projectLinkScale = useTransform(navT, [0, 1], [1, 0.91]);
+  const projectLinkFontSize = useTransform(navT, [0, 1], [13, 11]);
 
   // Scroll-spy: highlight the nav tab of whichever section crosses the
   // active zone (~35% viewport height) while scrolling.
@@ -123,7 +128,13 @@ export function Nav() {
   }, [openId]);
 
   const go = (id: string) => {
-    if (openId) setOpenId(null);
+    if (openId) {
+      setActive(id === "team" ? "team" : id);
+      setOpenId(null);
+      setOpen(false);
+      window.setTimeout(() => scrollToSection(id), 80);
+      return;
+    }
     scrollToSection(id);
     setOpen(false);
   };
@@ -160,6 +171,10 @@ export function Nav() {
       }}
     >
       <motion.div
+        key={openId ? "project-nav" : "main-nav"}
+        initial={{ opacity: 0, y: -7 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
         style={{
           maxWidth: 1240,
           margin: "0 auto",
@@ -183,7 +198,7 @@ export function Nav() {
             gap: 10,
             color: T.text,
           }}
-          onClick={() => go("hero")}
+          onClick={() => openId ? setOpenId(null) : go("hero")}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -201,14 +216,15 @@ export function Nav() {
             <span className="pf-wordmark">
               STACK<span className="pf-wordmark-loop">LOOP</span>
             </span>{" "}
-            <span style={{ color: T.amber, fontSize: 13, fontWeight: 500 }}>×</span>{" "}
-            <span className="pf-mono" style={{ fontSize: 10, color: T.faint, fontWeight: 400, letterSpacing: "0.02em" }}>
-              AK·PR
-            </span>
+            {openId && activeProject ? (
+              <><span style={{ color: T.faint, margin: "0 10px" }}>/</span><span style={{ color: T.blue, fontWeight: 500 }}>{activeProject.name}</span></>
+            ) : (
+              <><span style={{ color: T.amber, fontSize: 13, fontWeight: 500 }}>×</span>{" "}<span className="pf-mono" style={{ fontSize: 10, color: T.faint, fontWeight: 400 }}>AK·PR</span></>
+            )}
           </span>
         </div>
 
-        <div className="pf-nav-desktop" style={{ display: "flex", gap: 32, alignItems: "center" }}>
+        {!openId && <div className="pf-nav-desktop" style={{ display: "flex", gap: 32, alignItems: "center" }}>
           {NAV_ITEMS.map((item) => (
             <motion.button
               key={item.id}
@@ -250,9 +266,27 @@ export function Nav() {
               )}
             </motion.button>
           ))}
-        </div>
+        </div>}
 
-        <Magnetic className="pf-nav-desktop" strength={0.3}>
+        {openId && <motion.div className="pf-project-links" style={{ gap: projectLinkGap }}>
+          {[{ id: "hero", label: "HOME" }, { id: "team", label: "ABOUT US" }].map((item) => (
+            <motion.button
+              key={item.id}
+              className="pf-mono"
+              onClick={() => go(item.id)}
+              style={{ position: "relative", scale: projectLinkScale, background: "none", border: "none", color: active === item.id ? T.text : T.dim, fontSize: projectLinkFontSize, letterSpacing: "0.08em", cursor: "pointer", padding: "6px 0", transition: "color .25s ease" }}
+              whileHover={{ scale: 1.06, y: -1 }}
+              transition={{ type: "spring", stiffness: 380, damping: 28 }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = T.text)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = active === item.id ? T.text : T.dim)}
+            >
+              {item.label}
+              {active === item.id && <motion.span layoutId="pf-nav-underline" transition={{ type: "spring", stiffness: 380, damping: 32 }} style={{ position: "absolute", left: 0, right: 0, bottom: -3, height: 2, borderRadius: 2, background: `linear-gradient(90deg, ${T.violet}, ${T.blue})`, boxShadow: `0 0 8px ${T.violet}66` }} />}
+            </motion.button>
+          ))}
+        </motion.div>}
+
+        {!openId && <Magnetic className="pf-nav-desktop" strength={0.3}>
           <button
             className="pf-mono"
             onClick={() => go("contact")}
@@ -285,11 +319,18 @@ export function Nav() {
           >
             START A PROJECT <ArrowRight size={12} />
           </button>
-        </Magnetic>
+        </Magnetic>}
+
+        {openId && <motion.button className="pf-project-start pf-mono" style={{ scale: projectLinkScale }} whileHover={{ scale: 1.04, y: -1 }} transition={{ type: "spring", stiffness: 380, damping: 28 }} onClick={() => go("contact")}>START A PROJECT <ArrowRight size={12}/></motion.button>}
+
+        {openId && <div className="pf-project-nav-actions">
+          <button className="pf-mono" onClick={() => setOpenId(null)}><ArrowLeft size={14}/> Back to projects</button>
+          {activeProject?.repoUrl && <a className="pf-mono" href={activeProject.repoUrl} target="_blank" rel="noreferrer">Open repository <ArrowUpRight size={13}/></a>}
+        </div>}
 
         <ThemeToggle theme={theme} onToggle={toggleTheme} size={32} />
 
-        <button
+        {!openId && <button
           className="pf-nav-mobile"
           onClick={() => setOpen((o) => !o)}
           style={{
@@ -302,11 +343,11 @@ export function Nav() {
           }}
         >
           <span className="pf-mono" style={{ fontSize: 11 }}>{open ? "CLOSE" : "MENU"}</span>
-        </button>
+        </button>}
       </motion.div>
 
       <AnimatePresence>
-        {open && (
+        {open && !openId && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
