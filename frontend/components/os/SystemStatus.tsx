@@ -48,18 +48,6 @@ export function SystemStatus() {
           <span style={{ color: T.text }}>{value}</span>
         </div>
       ))}
-      <div
-        style={{
-          marginTop: 10,
-          paddingTop: 10,
-          borderTop: `1px solid ${T.border}`,
-          fontSize: 9,
-          letterSpacing: "0.1em",
-          color: T.faint,
-        }}
-      >
-        {OS_STATUS.mode}
-      </div>
     </div>
   );
 }

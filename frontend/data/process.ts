@@ -22,11 +22,11 @@ export const ASSISTANT_KB = [
   },
   {
     k: ["pritam", "pritam routh"],
-    a: "Pritam Routh is the AI / ML Engineer — agents, LLM applications, RAG, tool calling and agentic systems, with backend and API work as part of the same build. His map: DATA → MODEL → LLM → AGENT → TOOLS → API → WORKFLOW → ACTION.",
+    a: "Pritam Routh is the AI / ML Engineer and DevOps specialist — agents, LLM applications, RAG, tool calling and agentic systems, with backend and API work as part of the same build. His map: DATA → MODEL → LLM → AGENT → TOOLS → API → WORKFLOW → ACTION.",
   },
   {
     k: ["anjan", "anjan karan"],
-    a: "Anjan Karan is the Full-Stack Engineer — frontend, backend, databases, APIs, integrations and product automation. His map: INTERFACE → FRONTEND → API → BACKEND → DATABASE → INTEGRATION → AUTOMATION → PRODUCT.",
+    a: "Anjan Karan is the Lead UI Designer and Full-Stack Engineer — frontend, backend, databases, APIs, integrations and product automation. His map: INTERFACE → FRONTEND → API → BACKEND → DATABASE → INTEGRATION → AUTOMATION → PRODUCT.",
   },
   {
     k: ["ai agent", "ai agents", "what ai", "agents"],
@@ -62,7 +62,7 @@ export const ASSISTANT_KB = [
   },
   {
     k: ["team", "who", "two", "studio"],
-    a: "STACKLOOP is a two-person technology studio — Pritam Routh (AI / ML Engineer) × Anjan Karan (Full-Stack Engineer). Shared capabilities: backend, APIs, full-stack, architecture and automation.",
+    a: "STACKLOOP is a two-person technology studio — Pritam Routh (AI / ML Engineer & DevOps) × Anjan Karan (Lead UI Designer & Full-Stack Engineer). Shared capabilities: backend, APIs, full-stack, architecture and automation.",
   },
   {
     k: ["hello", "hi", "hey", "what"],

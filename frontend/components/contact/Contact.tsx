@@ -265,9 +265,6 @@ export function Footer() {
       <div style={{ maxWidth: 1240, margin: "0 auto", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }} className="pf-mono">
         <span style={{ fontSize: 11, color: T.faint }}>© {new Date().getFullYear()} {site.founderLine}</span>
         <span style={{ fontSize: 11, color: T.faint }}>STACKLOOP — BUILT AS ONE SYSTEM</span>
-        <span style={{ fontSize: 11, color: T.faint }}>
-          <span style={{ color: T.amber }}>●</span> DEMO MODE
-        </span>
       </div>
     </footer>
   );

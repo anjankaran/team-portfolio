@@ -33,5 +33,4 @@ export const OS_STATUS = {
   agents: "03 ACTIVE",
   automations: "12 RUNNING",
   systems: "07 DEPLOYED",
-  mode: "DEMO MODE",
 } as const;
