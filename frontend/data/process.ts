@@ -17,6 +17,30 @@ export const PROCESS: ProcessStep[] = [
 
 export const ASSISTANT_KB = [
   {
+    k: ["projects", "case studies", "what projects", "what have you built", "list projects"],
+    a: "STACKLOOP's capability case studies cover Full-Stack Product Systems, AI/ML Intelligence Systems, AI Agent Platforms, Agentic Workflow Engines, Business Automation Hubs, WhatsApp Automation Systems and API Integration Meshes. The Projects section also includes public repositories: Atal Janseva, IVR Atl Janseva, Golden Chat Assistant, Eduquest, Echo Basket, Sanbot-Agent-v3, Sanbot-Agen-V1 and Shopbot Nova. Click any project row to open its detail view.",
+  },
+  {
+    k: ["full-stack product", "product system"],
+    a: "The Full-Stack Product System case covers the complete product layer: React / Next.js interface, typed APIs, Node.js or Python services, SQL / NoSQL data, authentication, integrations and deployment. Open it from Projects for the full Problem → Architecture → Build → AI → Automation → Integration → Result walkthrough.",
+  },
+  {
+    k: ["ai/ml", "ai ml", "machine learning", "intelligence system"],
+    a: "The AI/ML Intelligence System case covers data preparation, models or LLMs, RAG, embeddings, evaluation, APIs and a human-facing product interface. It is designed to turn model experiments into grounded, observable product capabilities.",
+  },
+  {
+    k: ["agentic workflow", "workflow engine", "multi-step workflow"],
+    a: "The Agentic Workflow Engine case combines triggers, stateful workflow graphs, agent and rule nodes, retries, approvals and action logs. Agents handle ambiguous reasoning while deterministic rules protect important business decisions.",
+  },
+  {
+    k: ["business automation hub", "business process", "manual process"],
+    a: "The Business Automation Hub case turns lead routing, follow-ups, data sync, notifications and approvals into observable workflows connected to CRMs, email, chat tools and APIs.",
+  },
+  {
+    k: ["api integration", "integration mesh", "integrations"],
+    a: "The API Integration Mesh case covers REST and GraphQL connectors, canonical data contracts, webhooks, payload validation, retries, rate limits, secure secrets and monitoring across internal and external services.",
+  },
+  {
     k: ["build", "what do you", "capabilities", "do you do"],
     a: "STACKLOOP builds complete digital systems: full-stack products, AI/ML systems, AI agents, agentic workflows, business automation, WhatsApp automation and API integrations — end to end, from interface to deployment.",
   },
@@ -72,6 +96,8 @@ export const ASSISTANT_KB = [
 
 export const ASSISTANT_SUGGESTIONS = [
   "What does STACKLOOP build?",
+  "Which projects have you built?",
+  "Show me the AI agent case study.",
   "Tell me about Pritam.",
   "Tell me about Anjan.",
   "What AI agents can you build?",

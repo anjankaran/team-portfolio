@@ -363,19 +363,15 @@ function SystemFlow({
 }
 
 
-// Counts up from 0 to the stat's numeric value once it scrolls into view
-// (which for the hero is immediately on load), then holds — a static "20+"
-// felt flat next to everything else moving on this page.
-function CountUp({ value }: { value: string }) {
+// Counts up from 0 when the shared stats row enters the viewport.
+function CountUp({ value, active }: { value: string; active: boolean }) {
   const match = value.match(/^(\d+)(.*)$/);
   const target = match ? parseInt(match[1], 10) : 0;
   const suffix = match ? match[2] : "";
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.6 });
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {
-    if (!inView) return;
+    if (!active) return;
     const reduceMotion =
       typeof window !== "undefined" &&
       window.matchMedia &&
@@ -390,10 +386,10 @@ function CountUp({ value }: { value: string }) {
       onUpdate: (v) => setDisplay(Math.round(v)),
     });
     return () => controls.stop();
-  }, [inView, target]);
+  }, [active, target]);
 
   return (
-    <span ref={ref}>
+    <span>
       {display}
       {suffix}
     </span>
@@ -402,7 +398,17 @@ function CountUp({ value }: { value: string }) {
 
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [statsStarted, setStatsStarted] = useState(false);
+  const statsInView = useInView(statsRef, { once: true, amount: 0.35 });
+
+  // Start the hero counters immediately after hydration so the animation is
+  // visible on the landing view even before the viewport observer settles.
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setStatsStarted(true));
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   // Scroll bindings for drawing paths and fades
   const { scrollYProgress } = useScroll({
@@ -505,7 +511,7 @@ export function Hero() {
                 lineHeight: 1.08,
                 letterSpacing: "-0.02em",
                 margin: "0 0 18px",
-                color: T.text,
+                color: "var(--hero-text)",
               }}
             >
               We design, build,
@@ -515,6 +521,7 @@ export function Hero() {
               digital systems that
               <br />
               <span
+                className="pf-hero-highlight"
                 style={{
                   background: `linear-gradient(135deg, ${T.violet} 0%, ${T.blue} 100%)`,
                   WebkitBackgroundClip: "text",
@@ -534,7 +541,7 @@ export function Hero() {
               style={{
                 fontSize: "15px",
                 lineHeight: "1.55",
-                color: T.dim,
+                color: "var(--hero-dim)",
                 maxWidth: "520px",
                 margin: "0 0 26px",
               }}
@@ -658,9 +665,11 @@ export function Hero() {
 
             {/* Compact stats row - same width as the trusted-by block, not full page */}
             <motion.div
+              ref={statsRef}
               initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.65, ease: [0.16, 1, 0.3, 1] }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 display: "flex",
                 gap: "28px",
@@ -701,7 +710,7 @@ export function Hero() {
                         className="pf-disp"
                         style={{ fontSize: "18px", fontWeight: 700, color: T.text, lineHeight: 1.15 }}
                       >
-                        <CountUp value={stat.val} />
+                        <CountUp value={stat.val} active={statsStarted || statsInView} />
                       </span>
                       <span
                         className="pf-mono"

@@ -116,10 +116,13 @@ function ContactCard() {
           onFocus={(e) => (e.currentTarget.style.borderColor = `${T.violet}88`)}
           onBlur={(e) => (e.currentTarget.style.borderColor = T.border)}
         >
-          <option>AI Agent / Assistant</option>
           <option>Full-Stack Product</option>
-          <option>Automation / Workflow</option>
+          <option>AI/ML System</option>
+          <option>AI Agent / Assistant</option>
+          <option>Agentic Workflow</option>
+          <option>Business Automation</option>
           <option>WhatsApp Automation</option>
+          <option>API Integration</option>
           <option>Others</option>
         </select>
       </Field>
@@ -129,7 +132,7 @@ function ContactCard() {
           required
           name="message"
           rows={5}
-          placeholder="What are you looking to build?"
+          placeholder="Feel free to add what you want to build or automate..."
           style={{ ...inputStyle, resize: "vertical", minHeight: 120 }}
           onFocus={(e) => (e.currentTarget.style.borderColor = `${T.violet}88`)}
           onBlur={(e) => (e.currentTarget.style.borderColor = T.border)}

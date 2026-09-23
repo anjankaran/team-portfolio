@@ -15,7 +15,7 @@ export function Process() {
   const dotTop = useTransform(lineScale, (v) => `${v * 100}%`);
 
   return (
-    <section id="about" ref={ref} style={{ background: T.bg2, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, position: "relative", zIndex: 1 }}>
+    <section id="about" ref={ref} className="pf-process-section" style={{ background: T.bg2, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, position: "relative", zIndex: 1 }}>
       <SectionPhoto src="/assets/tree-neuron.jpg" opacity={0.12} />
       <div style={{ maxWidth: 1240, margin: "0 auto", padding: "56px 24px 120px", position: "relative", zIndex: 1 }}>
         <Reveal>

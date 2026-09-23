@@ -371,7 +371,8 @@ export function Projects() {
           Systems, not screenshots
         </h2>
         <p style={{ color: T.dim, marginTop: 16, maxWidth: 620, fontSize: 15, lineHeight: 1.6 }}>
-          Representative system designs illustrating how we approach a build end to end. Outcomes are
+          STACKLOOP builds complete digital systems: full-stack products, AI/ML systems, AI agents, agentic workflows,
+          business automation, WhatsApp automation and API integrations — end to end, from interface to deployment.
           described qualitatively — no invented numbers.
         </p>
       </Reveal>

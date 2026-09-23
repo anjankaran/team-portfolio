@@ -36,6 +36,9 @@ export function Nav() {
   const [active, setActive] = useState<string>("hero");
   const { openId, setOpenId, setReturnSection } = useCaseStudy();
   const activeProject = PROJECTS.find((project) => project.id === openId);
+  // Keep the initial render identical on the server and client. The inline
+  // theme script prevents a visual flash; this effect then syncs the controls
+  // after hydration without causing a hydration mismatch.
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   // Read the persisted choice once on mount â€” the inline script in
@@ -86,6 +89,14 @@ export function Nav() {
   const navShadow = useMotionTemplate`0 16px 36px -12px rgba(0, 0, 0, ${useTransform(navT, [0, 1], [0, 0.55])})`;
   const navMaxWidth = useTransform(navT, [0, 1], [1276, 1040]);
   const projectLinkPaddingY = useTransform(navT, [0, 1], [6, 2]);
+  // The light hero is visually bright, so keep the transparent navbar legible
+  // in white, then transition back to the normal light-theme colors as it
+  // becomes the solid scrolled pill.
+  // Use raw scroll for foreground colors so they follow the user's gesture
+  // immediately. The spring remains on the glass background and geometry.
+  const navTextColor = useTransform(scrollY, [0, 160], theme === "light" ? ["#ffffff", T.text] : [T.text, T.text]);
+  const navDimColor = useTransform(scrollY, [0, 160], theme === "light" ? ["rgba(255,255,255,0.78)", T.dim] : [T.dim, T.dim]);
+  const navFaintColor = useTransform(scrollY, [0, 160], theme === "light" ? ["rgba(255,255,255,0.68)", T.faint] : [T.faint, T.faint]);
 
   // Scroll-spy: highlight the nav tab of whichever section crosses the
   // active zone (~35% viewport height) while scrolling.
@@ -184,7 +195,7 @@ export function Nav() {
           gap: 16,
         }}
       >
-        <div
+        <motion.div
           className="pf-disp"
           style={{
             fontWeight: 700,
@@ -195,7 +206,7 @@ export function Nav() {
             display: "flex",
             alignItems: "center",
             gap: 10,
-            color: T.text,
+            color: navTextColor,
           }}
           onClick={() => openId ? setOpenId(null) : go("hero")}
         >
@@ -216,24 +227,26 @@ export function Nav() {
               STACK<span className="pf-wordmark-loop">LOOP</span>
             </span>{" "}
             {openId && activeProject ? (
-              <><span style={{ color: T.faint, margin: "0 10px" }}>/</span><span style={{ color: T.blue, fontWeight: 500 }}>{activeProject.name}</span></>
+              <><motion.span style={{ color: navFaintColor, margin: "0 10px" }}>/</motion.span><span style={{ color: T.blue, fontWeight: 500 }}>{activeProject.name}</span></>
             ) : (
-              <><span style={{ color: T.amber, fontSize: 13, fontWeight: 500 }}>×</span>{" "}<span className="pf-mono" style={{ fontSize: 10, color: T.faint, fontWeight: 400 }}>AK·PR</span></>
+              <><span style={{ color: T.amber, fontSize: 13, fontWeight: 500 }}>×</span>{" "}<motion.span className="pf-mono" style={{ fontSize: 10, color: navFaintColor, fontWeight: 400 }}>AK·PR</motion.span></>
             )}
           </span>
-        </div>
+        </motion.div>
 
         {!openId && <div className="pf-nav-desktop" style={{ display: "flex", gap: 32, alignItems: "center" }}>
           {NAV_ITEMS.map((item) => (
             <motion.button
               key={item.id}
               onClick={() => go(item.id)}
-              className="pf-mono"
+              whileHover={{ y: -1, scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              className={`pf-nav-item pf-mono${active === item.id ? " pf-nav-item-active" : ""}`}
               style={{
                 position: "relative",
                 background: "none",
                 border: "none",
-                color: active === item.id ? T.text : T.dim,
+                color: active === item.id ? navTextColor : navDimColor,
                 fontSize: 13.5,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
@@ -241,10 +254,8 @@ export function Nav() {
                 transition: "color .25s ease",
                 padding: "6px 0",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = T.text)}
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.color = active === item.id ? T.text : T.dim)
-              }
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.82")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
               {item.label}
               {active === item.id && (
@@ -271,11 +282,13 @@ export function Nav() {
           {[{ id: "hero", label: "HOME" }, { id: "team", label: "ABOUT US" }].map((item) => (
             <motion.button
               key={item.id}
-              className="pf-mono"
+              className={`pf-nav-item pf-mono${active === item.id ? " pf-nav-item-active" : ""}`}
               onClick={() => go(item.id)}
-              style={{ position: "relative", background: "none", border: "none", color: active === item.id ? T.text : T.dim, fontSize: 13.5, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", paddingTop: projectLinkPaddingY, paddingBottom: projectLinkPaddingY, paddingLeft: 0, paddingRight: 0, transition: "color .25s ease" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = T.text)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = active === item.id ? T.text : T.dim)}
+              whileHover={{ y: -1, scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              style={{ position: "relative", background: "none", border: "none", color: active === item.id ? navTextColor : navDimColor, fontSize: 13.5, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", paddingTop: projectLinkPaddingY, paddingBottom: projectLinkPaddingY, paddingLeft: 0, paddingRight: 0, transition: "color .25s ease" }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.82")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
               {item.label}
               {active === item.id && <motion.span layoutId="pf-nav-underline" transition={{ type: "spring", stiffness: 380, damping: 32 }} style={{ position: "absolute", left: 0, right: 0, bottom: -3, height: 2, borderRadius: 2, background: `linear-gradient(90deg, ${T.violet}, ${T.blue})`, boxShadow: `0 0 8px ${T.violet}66` }} />}
@@ -284,14 +297,14 @@ export function Nav() {
         </motion.div>}
 
         {!openId && <Magnetic className="pf-nav-desktop" strength={0.3}>
-          <button
+          <motion.button
             className="pf-mono"
             onClick={() => go("contact")}
             style={{
               background: "transparent",
               border: `1.5px solid ${T.violet}aa`,
               borderRadius: "4px",
-              color: T.text,
+              color: navTextColor,
               fontSize: 11,
               fontWeight: 500,
               padding: "9px 18px",
@@ -315,7 +328,7 @@ export function Nav() {
             }}
           >
             START A PROJECT <ArrowRight size={12} />
-          </button>
+          </motion.button>
         </Magnetic>}
 
         {openId && <motion.button className="pf-project-start pf-mono" onClick={() => go("contact")}>START A PROJECT <ArrowRight size={12}/></motion.button>}
@@ -405,6 +418,22 @@ export function Nav() {
       <style>{`
         .pf-nav-desktop { display: flex; }
         .pf-nav-mobile { display: none; }
+        .pf-nav-item::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -5px;
+          height: 2px;
+          border-radius: 2px;
+          background: ${T.amber};
+          box-shadow: 0 0 8px ${T.amber}88;
+          transform: scaleX(0);
+          transform-origin: center;
+          transition: transform .22s cubic-bezier(.16,1,.3,1);
+        }
+        .pf-nav-item:hover::after { transform: scaleX(1); }
+        .pf-nav-item-active:hover::after { transform: scaleX(0); }
         @media (max-width: 900px) {
           .pf-nav-desktop { display: none !important; }
           .pf-nav-mobile { display: inline-flex; }

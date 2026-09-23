@@ -12,6 +12,8 @@
   --violet: #74bb7e;
   --amber: #e3b462;
   --amber-dim: #6b5730;
+  --hero-text: #f1eee3;
+  --hero-dim: #a7ab98;
   /* Hero's flow-node cards and core sphere are deliberately near-black in
      dark mode, hardcoded rather than built from --surface — they're meant
      to read as distinct "device" panels, not just another card. This token
@@ -55,6 +57,20 @@
   --team-chip-bg: #ffffff;
   --on-dark-surface-dim: #c9cdbc;
   --on-dark-surface-border: rgba(255, 255, 255, 0.18);
+  --hero-text: #ffffff;
+  --hero-dim: rgba(255, 255, 255, 0.84);
+}
+
+/* The light theme keeps the hero image visible, so its foreground copy
+   remains white instead of using the light page's dark body text. */
+:root[data-theme="light"] .pf-hero-highlight {
+  background: none !important;
+  -webkit-text-fill-color: var(--amber) !important;
+}
+
+/* Keep the How We Build section clean and white in light mode. */
+:root[data-theme="light"] .pf-process-section .pf-section-photo {
+  opacity: 0 !important;
 }
 
 /* Smooth cross-fade for the dominant background/text switch when toggling
